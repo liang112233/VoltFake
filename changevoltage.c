@@ -39,13 +39,9 @@ fd = open("/dev/cpu/0/msr", O_WRONLY);
 		return -1;
 	}
 
-plane_zero = wrmsr( 0, 0);
+plane_zero = wrmsr_value( -200, 0);
 
 voltage_change(fd,plane_zero);
-
-
-
-
 
 
 }	
