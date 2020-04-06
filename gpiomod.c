@@ -14,7 +14,7 @@ static struct gpio leds[] = {
 
 /*define gpios for input*/
 static struct gpio buttons[] = {
-              {98, GPIOF_IN, "BUTTON 1"},
+              {23, GPIOF_IN, "BUTTON 1"},
              // {92, GPIOF_IN, "BUTTON 2"},
 
 };
@@ -103,6 +103,8 @@ if(ret) {
            printk(KERN_ERR "2 Unable to request IRQ: %d\n", ret);
            goto fail2;
             }
+
+
 /*
   ret = gpio_to_irq(buttons[1].gpio);
 
@@ -171,6 +173,6 @@ module_init(gpiomod_init);
 module_exit(gpiomod_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_INFO(vermagic, "4.14.29-libre-computer-02957-g0567c68c5f4d-dirty SMP mod_unload aarch64");
+MODULE_INFO(vermagic, "4.19.113-v7+ SMP mod_unload modversions ARMv7 p2v8 ");
 
 
