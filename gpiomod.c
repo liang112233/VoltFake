@@ -41,10 +41,7 @@ static irqreturn_t button_isr(int irq, void *data)
    // }
     return IRQ_HANDLED;
 
-
-
 }
-
 
 
 static int __init gpiomod_init(void){
@@ -97,37 +94,19 @@ static int __init gpiomod_init(void){
 
   printk(KERN_INFO "Successfully requested BUTTON1 IRQ: %d\n", button_irqs[0]);
 
+  gpio_set_debounce(buttons[0].gpio, 1);// 1ms
+
+
   ret = request_irq(button_irqs[0], button_isr, IRQF_TRIGGER_RISING /* | IRQF_DISABLED */, "gpiomod#button1", NULL);
 
-if(ret) {
+ if(ret) {
            printk(KERN_ERR "2 Unable to request IRQ: %d\n", ret);
            goto fail2;
             }
 
 
-/*
-  ret = gpio_to_irq(buttons[1].gpio);
-
-  if(ret < 0) {
-          printk(KERN_ERR "Unable to request IRQ: %d\n", ret);
-          goto fail2;
-            }
-  
-  button_irqs[1] = ret;
-
-  printk(KERN_INFO "Successfully requested BUTTON2 IRQ: %d\n", button_irqs[1]);
-
-  */
-
-//  ret = request_irq(button_irqs[1], button_isr, IRQF_TRIGGER_RISING /* | IRQF_DISABLED */, "gpiomod#button2", NULL);
-
-  // if(ret) {
-    //          printk(KERN_ERR  "3 Unable to request IRQ: %d\n", ret);
-      //        goto fail3;
-        //        }
-
   return 0;
-// cleanup what has been setup so far
+
 
   fail2:
          gpio_free_array(buttons, ARRAY_SIZE(leds));
@@ -136,8 +115,6 @@ if(ret) {
          gpio_free_array(leds, ARRAY_SIZE(leds));
 
   return ret;
-
-
 
 
 }
