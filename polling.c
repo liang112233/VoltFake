@@ -3,7 +3,8 @@
 #include <linux/kernel.h>
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
-
+#include <linux/kthread.h>
+#include <linux/sched.h>
 /* 
 define gpios for outputs
 */
@@ -22,37 +23,9 @@ static struct gpio buttons[] = {
 /*Later, the assigned IRQ numbers for the buttons are stored here*/
 static int button_irqs[]={-1,-1};
 
-unsigned int last_interrupt_time = 0;
-static uint64_t epochMilli;
-
-unsigned int millis (void)
-{
-  struct timeval tv ;
-  uint64_t now ;
-
-  do_gettimeofday(&tv) ;
-  now  = (uint64_t)tv.tv_sec * (uint64_t)1000 + (uint64_t)(tv.tv_usec / 1000) ;
-
-  return (uint32_t)(now - epochMilli) ;
-}
-
-
-
-
-
 /*the interrupt service routine called on button presses*/
 static irqreturn_t button_isr(int irq, void *data)
 {
-   unsigned int interrupt_time = millis();
-
-   if (interrupt_time - last_interrupt_time < 100) 
-   {
-     printk(KERN_NOTICE "Ignored Interrupt!!!!! \n");
-     return IRQ_HANDLED;
-   }
-   last_interrupt_time = interrupt_time;
-
-
     if(irq==button_irqs[0] && !gpio_get_value(leds[0].gpio)){
 
                   gpio_set_value(leds[0].gpio, 1);
@@ -122,7 +95,7 @@ static int __init gpiomod_init(void){
 
   printk(KERN_INFO "Successfully requested BUTTON1 IRQ: %d\n", button_irqs[0]);
 
-//  gpio_set_debounce(buttons[0].gpio, 1);// 1ms
+  gpio_set_debounce(buttons[0].gpio, 1);// 1ms
 
 
   ret = request_irq(button_irqs[0], button_isr, IRQF_TRIGGER_RISING /* | IRQF_DISABLED */, "gpiomod#button1", NULL);
@@ -155,7 +128,7 @@ static void __exit gpiomod_exit(void){
   // stuff to do
 
   free_irq(button_irqs[0],NULL);
-free_irq(button_irqs[1],NULL);
+  free_irq(button_irqs[1],NULL);
 
   //turn off all LEDs
 
