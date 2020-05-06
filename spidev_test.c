@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 	int k = 0;
 
 
-	for (k=0 ; k<10000000 ; k++){
+	for (k=0 ; k<100000 ; k++){
 
 	transfer(fd);
 
